@@ -1,0 +1,9 @@
+Package: alonsaRp
+Version: 0.1
+Date: 2020-01-13
+Title: Miscelaneous utilities
+Description: Miscelaneous utilities.
+Author: Francisco Alonso-Sarria <alonsarp@um.es>
+Maintainer: Francisco Alonso-Sarria <alonsarp@um.es>
+License: GPL-3
+RoxygenNote: 7.0.2
