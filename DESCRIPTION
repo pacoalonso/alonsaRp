@@ -6,4 +6,6 @@ Description: Miscelaneous utilities.
 Author: Francisco Alonso-Sarria <alonsarp@um.es>
 Maintainer: Francisco Alonso-Sarria <alonsarp@um.es>
 License: GPL-3
+Suggests: testthat, knitr, rmarkdown
+VignetteBuilder: knitr
 RoxygenNote: 7.0.2

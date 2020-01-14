@@ -1,0 +1,20 @@
+---
+title: "Introduction to moda"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to mode}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+We are going to calculate the mode of a dataset:
+
+```{r}
+library(alonsaRp)
+data(datos)
+datos
+moda(datos)
+moda(datos, na.rm=TRUE)
+```
+
+
