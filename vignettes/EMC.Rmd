@@ -1,0 +1,112 @@
+---
+title: "Introducción a MCA"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to MCA}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+fig_width: 10
+fig_height: 4 
+---
+
+Vamos a ver como utilizar con R un conjunto de funciones que nos permiten hacer evaluación multicriterio con datos espaciales desde R. Las funciones son:
+
+- **EMC_var2crit** Para convertir variables en criterios
+- **EMC_pesos_criterios** Para calcular los pesos de los diversos criterios
+- **EMC_combinacion** Para calcular la adecuación con el método de combinación lineal
+- **EMC_topsis** Para calcular la adecuación con métodos de distancia al punto ideal
+
+### Librería y datos
+
+```{r}
+library(alonsaRp)
+```
+Creamos la matriz de alternativas que contiene 4 alternativas para 3 criterios (pendiente, distancia a un espacio natural y distancia a una carretera en kilómetros:
+
+```{r}
+variables <-data.frame(cbind(c(18, 10, 14, 8),
+                          c(4, 8, 2, 3),
+                          c(22, 28, 18, 30)))
+
+names(variables) <- c("Pendiente", "Espacio", "Carretera")
+```
+
+date cuenta de que la orden {\tt cbind} "pega" columnas para formar una matriz.
+
+### Obtención de los criterios
+
+La función **EMC_var2crit** permite convertir variables en criterios pasándole un vector con los valores de la variable, y otro con los valores del criterio, correspondientes a un gráfico que relaciona ambos como los siguientes. 
+
+```{r, echo=FALSE, fig.height = 4, fig.width = 12}
+par(mfrow=c(1,3))
+plot(c(0,20,90),c(100,0,0), type="l", xlab="Pendiente (grados)",ylab="Criterio de pendiente", cex.axis=1.4,cex.lab=1.4)
+plot(c(0,10,50),c(0,100,100), type="l", xlab="Distancia a espacio natural", ylab="Criterio de distancia a espacio", cex.axis=1.4,cex.lab=1.4)
+plot(c(0,32,50),c(100,0,0), type="l", xlab="Distancia a carretera (km)",ylab="Criterio de distancia a carretera", cex.axis=1.4,cex.lab=1.4)
+```
+
+En cada caso puedes ver cuales son los puntos de inflexión. Vamos a crear un data.frame para los criterios copiándolo del de las variables
+
+```{r}
+criterios <- variables
+criterios[,1] <-EMC_var2crit(variables[,1], var=c(0,20,100), cri=c(100,0,0))
+criterios[,2] <-EMC_var2crit(variables[,2], var=c(0,10,100), cri=c(0,100,0))
+criterios[,3] <-EMC_var2crit(variables[,3], var=c(0,32,100), cri=c(100,0,0))
+variables
+criterios
+```
+
+### Obtenemos los pesos 
+
+Vamos a obtener los pesos por el método de clasificación:
+
+```{r}
+pesos1 <- EMC_pesos_criterios(names(criterios))
+pesos1
+```
+
+tasación simple a partir de un vector que mide al importancia de los diferentes criterios:
+
+```{r}
+pesos2 <- EMC_pesos_criterios(names(criterios), importancia=c(100,50,40))
+pesos2
+```
+
+y jerarquía analítica a partir de la matriz de comparación por pares:
+
+```{r}
+mcp <- rbind(c(1,3,7),
+             c(1/3,1,5),
+             c(1/7,1/5,1))
+mcp
+
+pesos3 <- EMC_pesos_criterios(names(criterios), matriz=mcp)
+pesos3
+```
+
+### Cálculo de adecuación
+
+Con estos resultados ya podemos obtener la adecuación para cada alternativa con combinación lineal. Vamos a utilizar los pesos obtenidos con el procedimiento de jerarquía analítica. Como la función correspondiente devuelve varias cosas, es necesario especificar cual de ellas contiene los pesos:
+
+
+```{r}
+EMC_combinacion(criterios, w=pesos3$w)
+```
+
+A continuación obtenemos la adecuación mediante técnicas basadas en la distancia al punto ideal:
+
+```{r}
+EMC_topsis(criterios, w=pesos3$w)
+```
+
+### Con capas raster
+
+Para hacer algo similar con capas raster deberás cargar las capas de las variables con la función `raster` de la librería `raster` desde ficheros GeoTiff o Img. Una vez que las tengas, deberás pasarlas a un objeto  `SpatialGridDataFrame` llamado `capas`.
+
+El `slot` `data` del objeto `capas` será un `data.frame` similar a `variables`, aunque con muchas más filas, con el que puedes calcular la adecuación. 
+
+Para añadir los resultados de adecuación a  `capas` basta con que escribas, por ejemplo:
+
+```{r, eval=FALSE}
+capas$adecuacion <- EMC_combinacion(criterios, w=pesos3$w)
+```
+

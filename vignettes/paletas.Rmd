@@ -1,0 +1,27 @@
+---
+title: "Introduction to palettes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to palettes}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+
+```{r, eval=FALSE}
+library(alonsaRp)
+
+pal <- creaPaleta(n=7)
+ints <- intervalos("MDE",7, grass=TRUE)
+
+pintaPal(pal)
+
+paleta2GRASS("MDE", pal)
+
+z <-rnorm(100)
+ints2 <- intervalos(z,7, grass=TRUE)
+HistPal(z,pal, ints2)
+```
+
+

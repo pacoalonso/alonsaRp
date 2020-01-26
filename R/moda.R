@@ -11,7 +11,7 @@
 #'
 #' @keywords statistics
 #'
-
+#'
 moda <- function(v, na.rm=FALSE) {
    if (na.rm) v <- v[which(!is.na(v))]
    if(length(which(is.na(v)))>0) return(NA)

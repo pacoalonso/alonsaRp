@@ -6,6 +6,8 @@ Description: Miscelaneous utilities.
 Author: Francisco Alonso-Sarria <alonsarp@um.es>
 Maintainer: Francisco Alonso-Sarria <alonsarp@um.es>
 License: GPL-3
+Imports: PearsonDS, evd, moments, tripack, stats, sp, utils, automap, gstat, rgrass7, rgdal, RColorBrewer, classInt, raster, clue, scales, methods
 Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
+Encoding: UTF-8
 RoxygenNote: 7.0.2
