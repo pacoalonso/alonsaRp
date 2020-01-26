@@ -4,12 +4,12 @@
 \alias{EMC_topsis}
 \title{Calculo de distancia al punto ideal, antiideal y método Topsis.}
 \usage{
-EMC_topsis(matriz, pi = NULL, pai = NULL, w = NULL)
+EMC_topsis(matriz, pid = NULL, pai = NULL, w = NULL)
 }
 \arguments{
 \item{matriz}{Matriz que contiene en filas las alternativas y en columnas los criterios}
 
-\item{pi}{Vector con los valores del punto ideal. Por defecto se toma el máximo de cada criterio}
+\item{pid}{Vector con los valores del punto ideal. Por defecto se toma el máximo de cada criterio}
 
 \item{pai}{Vector con los valores del punto antiideal. Por defecto se toma el mínimo de cada criterio}
 

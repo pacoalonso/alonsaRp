@@ -22,7 +22,7 @@ EMC_var2crit <- function(x, var, cri=NULL, from=NULL, to=NULL) {
    }
    if (!is.null(to) & !is.null(from)) {
       for (i in 1:length(from)) {
-         w <- which(x>=from[i])
+         w <- which(x==from[i])
          y[w] <- to[i]
       }
    }
@@ -84,7 +84,7 @@ EMC_pesos_criterios <- function(criterios, importancia=NULL, matriz=NULL) {
 #' Calculo de distancia al punto ideal, antiideal y método Topsis.
 #'
 #' @param matriz Matriz que contiene en filas las alternativas y en columnas los criterios
-#' @param pi Vector con los valores del punto ideal. Por defecto se toma el máximo de cada criterio
+#' @param pid Vector con los valores del punto ideal. Por defecto se toma el máximo de cada criterio
 #' @param pai Vector con los valores del punto antiideal. Por defecto se toma el mínimo de cada criterio
 #' @param w Vector con los coeficientes de ponderación de los criterios. Por defecto ponderan todos igual.
 #'
@@ -92,19 +92,23 @@ EMC_pesos_criterios <- function(criterios, importancia=NULL, matriz=NULL) {
 #'
 #' @export
 #'
-EMC_topsis <- function(matriz, pi=NULL, pai=NULL, w=NULL) {
-    if(is.null(pi)) pi <- apply(matriz,2, max)
-    if(is.null(pai)) pai <- apply(matriz,2, min)
+EMC_topsis <- function(matriz, pid=NULL, pai=NULL, w=NULL) {
     if(is.null(w)) w <- rep(1/ncol(matriz),ncol(matriz))
+    if(is.null(pid)) pid <- apply(matriz,2, max, na.rm=TRUE)
+    if(is.null(pai)) pai <- apply(matriz,2, min, na.rm=TRUE)
 
-    dpi <- dpai <- c()
+    pid2 <- matrix(rep(pid, each=nrow(matriz)),nrow=nrow(matriz))
+    pai2 <- matrix(rep(pai, each=nrow(matriz)),nrow=nrow(matriz))
+    w2 <-   matrix(rep(w,   each=nrow(matriz)),nrow=nrow(matriz))
 
-    for (i in 1:nrow(matriz)){
-      dpi[i] <- sqrt(sum(w*(pi-matriz[i,])^2))
-      dpai[i] <- sqrt(sum(w*(pai-matriz[i,])^2))
-    }
-    tp <- dpai / (dpai+dpi)
-    return(data.frame(dpi=dpi,dpai=dpai,topsis=tp))
+    m2a = (matriz-pid2)^2 * w2
+    m2b = (matriz-pai2)^2 * w2
+
+    dpid <- apply(m2a, 1, sum)
+    dpai <- apply(m2b, 1, sum) 
+
+    tp <- dpai / (dpai+dpid)
+    return(data.frame(dpi=dpid,dpai=dpai,topsis=tp))
 }
 
 
@@ -119,8 +123,7 @@ EMC_topsis <- function(matriz, pi=NULL, pai=NULL, w=NULL) {
 #'
 EMC_combinacion <- function(matriz, w=NULL) {
     if(is.null(w)) w <- rep(1/ncol(matriz),ncol(matriz))
-    res <- c()
-    for (i in 1:nrow(matriz)) res[i] <- sum(w*matriz[i,])
+    res <- as.matrix(matriz) %*% as.matrix(w)
     return(res)
 }
 
