@@ -80,7 +80,7 @@ dSqrtETmax <- function(x,k,a) {
 #'
 qSqrtETmax <- function(q, k, a) {
    pp = seq(0,1000,by=0.1)
-   prob = pSqrtETmax(pp, 20, 2)
+   prob = pSqrtETmax(pp, k, a)
    pp[which(prob>q)[1]]
 }
 
